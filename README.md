@@ -149,7 +149,7 @@ For the research integrity context of AI use in research, see the UK Research In
 
 ## AI assistance
 
-The agent definitions, chair's brief, documents and code in this repository were drafted with the help of Claude (Anthropic) and reviewed by the author, who is responsible for the content.
+The agent definitions, chair's brief, documents and code in this repository were drafted by the author with the help of Claude (Anthropic). The author is responsible for the content.
 
 ## Licence
 

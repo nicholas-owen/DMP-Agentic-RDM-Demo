@@ -1,0 +1,13 @@
+sample,fastq_1,fastq_2,strandedness,line_id,condition,differentiation_batch,sequencing_run,collection_date
+MNT-001,data/rnaseq/MNT-001_R1.fastq.gz,data/rnaseq/MNT-001_R2.fastq.gz,reverse,NBiPSC-01,ALS,D1,RUN01,2028-02-14
+MNT-002,data/rnaseq/MNT-002_R1.fastq.gz,data/rnaseq/MNT-002_R2.fastq.gz,reverse,NBiPSC-02,ALS,D1,RUN01,2028-02-14
+MNT-003,data/rnaseq/MNT-003_R1.fastq,data/rnaseq/MNT-003_R2.fastq.gz,reverse,NBiPSC-03,ALS,D1,RUN01,2028-02-14
+MNT-004,data/rnaseq/MNT-004_R1.fastq.gz,data/rnaseq/MNT-004_R2.fastq.gz,reverse,NBiPSC-04,ALS,D1,RUN01,2028-02-15
+MNT-005,data/rnaseq/MNT-005_R1.fastq.gz,data/rnaseq/MNT-005_R2.fastq.gz,stranded,NBiPSC-05,ALS,D1,RUN01,2028-02-15
+MNT-006,data/rnaseq/MNT-006_R1.fastq.gz,data/rnaseq/MNT-006_R2.fastq.gz,reverse,NBiPSC-06,ALS,D1,RUN01,15/02/2028
+MNT-007_JH_1958-03-14,data/rnaseq/MNT-007_R1.fastq.gz,data/rnaseq/MNT-007_R2.fastq.gz,reverse,NBiPSC-07,control,D2,RUN02,2028-04-11
+MNT-008,data/rnaseq/MNT-008_R1.fastq.gz,data/rnaseq/MNT-008_R2.fastq.gz,reverse,NBiPSC-08,Ctrl,D2,RUN02,2028-04-11
+MNT-009,data/rnaseq/MNT-009_R1.fastq.gz,data/rnaseq/MNT-009_R2.fastq.gz,reverse,NBiPSC-09,control,D2,RUN02,2028-04-11
+MNT-010,data/rnaseq/MNT-010_R1.fastq.gz,data/rnaseq/MNT-009_R2.fastq.gz,reverse,NBiPSC-10,control,D2,RUN02,2028-04-12
+MNT-011,data/rnaseq/MNT-011 R1.fastq.gz,data/rnaseq/MNT-011_R2.fastq.gz,reverse,NBiPSC-11,control,D2,RUN02,2028-04-12
+MNT-012,data/rnaseq/MNT-012_R1.fastq.gz,,reverse,NBiPSC-12,control,D2,RUN02,2028-04-12

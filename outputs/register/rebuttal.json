@@ -1,0 +1,19 @@
+{
+  "round": "rebuttal",
+  "reviews": [
+    {
+      "role": "bioinformatician",
+      "round": "rebuttal",
+      "responses": [
+        {
+          "finding_id": "BIO-9",
+          "decision": "revised",
+          "response": "The challenge is right that 6.3 says 'joint analysis'. Six carriers are a contribution to a larger cohort, not the whole of it, and the plan gives no Calder cohort size, so I cannot show the analysis is underpowered. I withdraw the power claim and the title 'not supported by the WGS design'. The challenge is also right that our side's pipeline is pinned in 1.5. One narrower point remains, and it is about which data are shared, not about scientific design. Revised finding (minor, confidence low): 'Section 6.3 shares single-site VCF files for joint analysis but does not say whether these are per-sample gVCFs or final multi-sample call sets, or that the reference build and caller version will be harmonised with Calder's. A one-line statement of the file type shared, plus a reference to the collaboration protocol that holds the joint-calling details, would make the shared output reusable for its stated purpose.'",
+          "evidence": {
+            "working": "DMP 6.3: 'Pseudonymised WGS variant calls (VCF files) and clinical data will be shared with collaborators at Calder University ... for joint analysis of C9orf72 modifier variants.' DMP 1.5 pins nf-core/sarek on GRCh38 with GENCODE for our own processing. The plan does not say which VCF type is shared, and it does not refer to a collaboration protocol. From professional knowledge, not in the reading pack: to genotype jointly across sites you normally need per-sample gVCFs, or to re-call from BAMs, on a matching reference build. Final VCFs called separately at each site are hard to combine without artefacts. The type of file shared is a data-sharing matter that a DMP should cover. The full joint-calling method can sit in the collaboration protocol, as the applicant says. Because the remaining point rests on professional knowledge and is easy to fix, I have lowered confidence to low and kept severity at minor."
+          }
+        }
+      ]
+    }
+  ]
+}

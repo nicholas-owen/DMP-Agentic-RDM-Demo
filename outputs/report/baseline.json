@@ -1,0 +1,352 @@
+{
+  "role": "generalist",
+  "round": "independent",
+  "findings": [
+    {
+      "id": "GEN-1",
+      "dmp_section": "1.3",
+      "title": "Disease status completely confounded with differentiation batch, sequencing run and time",
+      "issue": "All six ALS lines are differentiated in batch 1 (February 2028) and sequenced on RUN01. All six controls are in batch 2 (April 2028) on RUN02. Any batch, run or seasonal effect is therefore inseparable from the ALS-versus-control comparison, so DESeq2 cannot estimate or remove it, and the primary result cannot be interpreted.",
+      "basis": "reasoning",
+      "evidence": {
+        "working": "DMP 1.3 assigns batch 1 to the patient lines and batch 2 to the control lines, each on its own sequencing run. The samplesheet agrees: every ALS row is D1/RUN01 and every control row is D2/RUN02. In a design matrix the condition column is then identical to the batch column and the run column, so a model with condition + batch is not full rank. Professional knowledge, not from the pack: differentiation batch is a major source of variation in iPSC-derived neuron transcriptomes."
+      },
+      "severity": "major",
+      "recommendation": "Balance the design so that each differentiation batch and each sequencing run contains equal numbers of ALS and control lines, ideally paired and randomised. Pool all libraries across lanes or runs, and record batch and run in the samplesheet as covariates.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-2",
+      "dmp_section": "1.2",
+      "title": "Replication and matching are inadequate for the stated comparison",
+      "issue": "Each group has one iPSC line per donor, n=6, and one differentiation per line. There are no replicate differentiations or clones, and controls are not matched to cases on sex or age. Line-to-line and differentiation variability cannot be separated from the disease effect, and the study has low power to relate expression to clinical features across only six patients.",
+      "basis": "reasoning",
+      "evidence": {
+        "working": "DMP 1.2 gives 'one iPSC line per participant'. DMP 1.3 gives one differentiation per line harvested at day 30. The samplesheet has 12 rows, one per line, with no replicates. The DMP summary says expression will be related to 'clinical features of disease' (ALSFRS-R, onset, survival) using six ALS donors. Professional knowledge, not from the pack: clone and differentiation variance in iPSC models is substantial, and n=6 offers little power for correlation with clinical variables."
+      },
+      "severity": "minor",
+      "recommendation": "Add at least two independent differentiations per line, and ideally two clones per donor. Match controls on sex and approximate age. Include a power or sample-size justification. Treat the clinical-correlation analysis as exploratory.",
+      "confidence": "medium"
+    },
+    {
+      "id": "GEN-3",
+      "dmp_section": "1.4",
+      "title": "Data volume estimate of 60 GB is out by well over an order of magnitude",
+      "issue": "The stated 30x WGS on 12 participants plus 40M-pair RNA-seq produces terabytes of FASTQ, BAM and VCF data, not 60 GB. The storage, backup and cost planning in sections 4 and 7 rests on this wrong figure.",
+      "basis": "reasoning",
+      "evidence": {
+        "working": "WGS: about 3.1 Gb genome x 30 = about 93 Gbases per sample. At typical compressed FASTQ size (about 0.4-0.5 bytes per base, professional knowledge) that is about 40-50 GB of FASTQ plus about 40-60 GB of BAM per sample, so about 90-110 GB per sample x 12 = about 1.1-1.3 TB. RNA-seq: 40M pairs x 200 bases = 8 Gbases per sample, so about 3-4 GB of FASTQ plus about 3-5 GB of BAM, about 7-9 GB x 12 = about 0.1 TB. Pipeline intermediates (nf-core work directories) roughly double peak usage. The realistic total is about 1.5-3 TB, which is 25-50 times the 60 GB stated in 1.4."
+      },
+      "severity": "major",
+      "recommendation": "Recalculate volumes by data type and file format (FASTQ, BAM or CRAM, VCF, counts), including intermediates and backup. Use the revised figure for NSRE workspace sizing and costing.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-4",
+      "dmp_section": "7.2",
+      "title": "NSRE storage and archive costs not requested",
+      "issue": "The plan uses the group's existing allocation and requests no storage costs. NSRE storage is charged per terabyte and must be costed in the grant. At about 2-3 TB over 36 months plus a 10-20 year archive, the costs are material and unfunded.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/12-nsre-user-guide.md",
+        "location": "8. Storage, backup and charges",
+        "quote": "Project storage is charged at £250 per terabyte per year, including backup, and must be requested when the workspace is set up and costed in grant applications."
+      },
+      "severity": "major",
+      "recommendation": "Cost NSRE project storage, for example 3 TB x £250 x 3 years = about £2,250. Cost NSRE archive storage for the full retention period at £60/TB/year. Cost deposit and curation effort, and include all of these in the MRC application.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-5",
+      "dmp_section": "1.5",
+      "title": "Reference and software versions insufficiently specified",
+      "issue": "The plan names GRCh38 and GENCODE without the GENCODE release or the specific GRCh38 build (for example, an analysis set with or without alt contigs). It does not give R or DESeq2 versions. The analysis cannot be reproduced exactly from what is stated.",
+      "basis": "reasoning",
+      "evidence": {
+        "working": "DMP 1.5: 'using the GRCh38 reference with GENCODE annotation. Differential expression will be analysed in R with DESeq2.' Only the nf-core releases are pinned. Professional knowledge: gene models and counts differ between GENCODE releases, and variant calls differ between GRCh38 builds."
+      },
+      "severity": "minor",
+      "recommendation": "Record the GENCODE release number, the exact reference FASTA and checksums, and the R and Bioconductor or DESeq2 versions, for example in an renv lockfile or a container. Record the nf-core release tags in the DMP.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-6",
+      "dmp_section": "1.5 / samplesheet",
+      "title": "Samplesheet has multiple errors that will break or corrupt the nf-core/rnaseq run",
+      "issue": "The samplesheet is inconsistent with the paired-end, reverse-stranded design and with nf-core input rules. One sample is wrongly paired with another sample's reads, one has no R2 file, and there are malformed paths, strandedness values, condition labels and dates.",
+      "basis": "reasoning",
+      "evidence": {
+        "working": "MNT-003 fastq_1 is uncompressed '.fastq' while fastq_2 is '.fastq.gz'. MNT-005 strandedness is 'stranded', not a valid value (forward/reverse/unstranded/auto). MNT-006 collection_date is '15/02/2028', unlike ISO dates elsewhere. MNT-008 condition is 'Ctrl', unlike 'control', which would create a third DESeq2 group. MNT-010 fastq_2 points to 'MNT-009_R2.fastq.gz', a sample mix-up. MNT-011 has a space in 'MNT-011 R1.fastq.gz'. MNT-012 has an empty fastq_2, although 1.4 says all libraries are paired-end 2 x 100 bp."
+      },
+      "severity": "major",
+      "recommendation": "Correct every row, and validate the samplesheet against the nf-core/rnaseq schema before running. Use controlled vocabularies for condition and strandedness, ISO 8601 dates, and checksums to confirm file-to-sample mapping.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-7",
+      "dmp_section": "3.3 / samplesheet",
+      "title": "Direct identifiers (initials and date of birth) present in research samplesheet",
+      "issue": "Sample MNT-007 is named 'MNT-007_JH_1958-03-14', which appears to embed the participant's initials and date of birth. This contradicts the claim that research data are pseudonymised and that the research team has no access to identities. The identifiers would also flow into file names, outputs and the deposited sample spreadsheet.",
+      "basis": "reasoning",
+      "evidence": {
+        "working": "DMP 3.3 says codes MNT-001 to MNT-012 are assigned by the clinical team and that 'The research team will not have access to it' (the key). Samplesheet row 8 has sample 'MNT-007_JH_1958-03-14'. Initials plus a full date of birth are direct or indirect identifiers. DMP 6.4 plans to deposit the 'sample information spreadsheet' publicly in ArrayExpress."
+      },
+      "severity": "major",
+      "recommendation": "Remove the identifiers immediately and check every file derived from the samplesheet. Assess whether this is a reportable incident under the University policy. Add a check that only study codes enter research systems.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-8",
+      "dmp_section": "2.1",
+      "title": "No metadata standard; MINSEQE needed for RNA-seq deposit and reuse",
+      "issue": "The plan says a formal metadata standard is not needed because analysis is within the group. However, 6.1 and 6.4 commit to public deposit, and ArrayExpress submissions must describe samples, protocols and sample-to-file relationships. A laboratory spreadsheet without a standard will not meet FAIR or UKRI requirements.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/08-metadata-standards.md",
+        "location": "2. MINSEQE",
+        "quote": "MINSEQE is a community standard setting out the minimum information needed to describe a high-throughput sequencing experiment, such as RNA-seq, so that others can interpret and reuse the data."
+      },
+      "severity": "major",
+      "recommendation": "Adopt MINSEQE for the RNA-seq data and EGA or ENA sample and experiment metadata for WGS. Use controlled vocabularies (for example ontology terms for disease and cell type) and record protocols and processing provenance from the start.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-9",
+      "dmp_section": "6.1",
+      "title": "Raw WGS and RNA-seq reads planned for open ENA release",
+      "issue": "Human genomic sequence reads can identify donors and are special category data. Open release through ENA is inappropriate, and the consent in 3.4 does not cover public release. RNA-seq reads also carry genotype information. Both should go to a controlled-access archive.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/07-repositories-for-human-sequence-data.md",
+        "location": "3. Human data that could identify donors",
+        "quote": "Such data should be submitted to the European Genome-phenome Archive (EGA), with a data access committee overseeing access."
+      },
+      "severity": "major",
+      "recommendation": "Deposit WGS and RNA-seq raw reads, alignments and variant calls in the EGA, with a named data access committee that includes independent members. Use the NSRE data release process for the deposit, and keep only non-identifying summary data in ArrayExpress.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-10",
+      "dmp_section": "6.4",
+      "title": "No licence, persistent identifiers or access level stated for shared data",
+      "issue": "The plan names no licence or conditions of reuse for the count tables, sample information or controlled-access data. It does not mention persistent identifiers. Clinical data that underpin the expression-clinical correlations have no sharing route at all.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/05-ukri-research-data-policy.md",
+        "location": "2. Metadata, identifiers and licences (\"What to share\"; \"Licences\")",
+        "quote": "Data and metadata must be shared under a clear and accessible licence, which should permit free reuse where possible."
+      },
+      "severity": "minor",
+      "recommendation": "State a licence for open processed data (for example CC BY 4.0) and data access conditions for EGA data. Cite accession numbers or DOIs in data access statements. Describe how the clinical variables will be shared through controlled access.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-11",
+      "dmp_section": "6.1 / 6.2",
+      "title": "Exclusive use and release timing unjustified and open-ended",
+      "issue": "The 12-month exclusive-use period is not justified. Raw-read release is tied to publication with no backstop date, so data could be withheld indefinitely if results are unpublished. The two release triggers (publication, and 12 months after data generation) are also inconsistent with each other.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/05-ukri-research-data-policy.md",
+        "location": "3. Timing and exclusive use (\"When to share\"; \"Exclusive use\"; \"Maximum embargoes on sharing\")",
+        "quote": "Data with long-term reuse value that have not yet been published must be shared no later than two years from the end of UKRI funding."
+      },
+      "severity": "minor",
+      "recommendation": "Justify the exclusive-use period and set a single, defined release date for each data type. Add a backstop no later than two years after the end of funding.",
+      "confidence": "medium"
+    },
+    {
+      "id": "GEN-12",
+      "dmp_section": "5.1",
+      "title": "No retention period or post-project preservation location",
+      "issue": "Data are kept only 'for the duration of the grant', and long-term decisions are deferred. The plan gives no minimum retention period and no archive location. The NSRE archive retains data only for the period stated in the DMP, so nothing is currently specified.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/05-ukri-research-data-policy.md",
+        "location": "5. Preservation and retention (\"Preserving and retaining data\")",
+        "quote": "Data that underpin published findings should normally be kept for at least 10 years after publication."
+      },
+      "severity": "major",
+      "recommendation": "State a retention period consistent with sponsor policy and the MRC retention framework (at least 10 years, or 20 if treated as a clinical study). Name the NSRE archive and EGA as preservation locations, and cost the archive storage.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-13",
+      "dmp_section": "3.1",
+      "title": "Consent used as UK GDPR lawful basis by a public authority",
+      "issue": "As a university, the controller should rely on public task (Article 6(1)(e)) and Article 9(2)(j), not consent. If consent is the lawful basis, a participant's withdrawal removes the legal basis for processing their data, which could undermine the 6-vs-6 analysis.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/01-hra-lawful-basis.md",
+        "location": "2. Legal basis for universities and other public authorities",
+        "quote": "the legal basis for processing personal data for research should be that processing is necessary for a task carried out in the public interest (UK GDPR Article 6(1)(e))."
+      },
+      "severity": "major",
+      "recommendation": "Change the lawful basis to Article 6(1)(e) with Article 9(2)(j). Keep research consent as an ethical and common-law-confidentiality requirement, and update the transparency information accordingly.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-14",
+      "dmp_section": "3.2",
+      "title": "DPIA wrongly ruled out on the basis of pseudonymisation",
+      "issue": "Pseudonymised data remain personal data, so pseudonymisation does not remove the DPIA requirement. The project processes genetic data, and the project also combines NHS clinical records with sequence data. Both trigger a mandatory DPIA, and NSRE project approval also requires one.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/02-ico-dpia.md",
+        "location": "2. Genetic data",
+        "quote": "Any processing of genetic data requires a DPIA"
+      },
+      "severity": "major",
+      "recommendation": "Complete the University DPIA screening and a full DPIA, approved by the DPO, before any processing begins. Correct 3.2 so that it does not treat pseudonymised data as outside data protection law.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-15",
+      "dmp_section": "6.3",
+      "title": "UK-US data bridge unlikely to cover a US university recipient",
+      "issue": "Calder University is likely a non-profit outside FTC jurisdiction and so cannot self-certify to the UK Extension. The plan shows no check of the DPF List. Without adequacy, the transfer needs an Article 46 safeguard (IDTA or the UK Addendum) and a transfer risk assessment.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/04-ico-international-transfers.md",
+        "location": "3. Who can join",
+        "quote": "The FTC's own letter explains that it does not have jurisdiction over most non-profit organisations."
+      },
+      "severity": "major",
+      "recommendation": "Verify whether Calder appears on the DPF List with UK Extension and non-HR coverage. Otherwise, put an IDTA or UK Addendum in place with a transfer risk assessment, approved by the Information Governance Office. Preferably give Calder NSRE accounts instead of transferring data.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-16",
+      "dmp_section": "6.3 / 7.1",
+      "title": "Controller and processor roles and data sharing agreements undefined",
+      "issue": "The plan does not state who is controller (the University as sponsor, the NHS Trust, or both jointly). It mentions no agreement between the Trust and the University for clinical data and the key, and no data sharing agreement with Calder University. Record-level sharing without an agreement is not permitted.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/06-mrc-data-about-people-and-retention.md",
+        "location": "5. Access decisions and agreements (guidance 4.5 to 4.8)",
+        "quote": "Data sharing must only go ahead under an appropriate data sharing agreement, and sharing activity must be reported to the MRC during the funding period."
+      },
+      "severity": "major",
+      "recommendation": "Define controller and processor roles for the University, the Trust and any sequencing provider. Put a site agreement or data processing agreement in place with the Trust, and an IGO-approved data sharing or collaborator agreement with Calder. Name an accountable data custodian.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-17",
+      "dmp_section": "3.4",
+      "title": "Consent limited to 'this study' does not cover sharing, deposit or future use",
+      "issue": "Consent covers use 'for this study' only. The plan also proposes WGS to 'support future analyses', transfer to a US collaborator, open ENA release and ArrayExpress deposit. None of these is covered, and participants are not told how data will be made available.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/06-mrc-data-about-people-and-retention.md",
+        "location": "2. Participant information and consent (guidance 1.3, 1.5)",
+        "quote": "Participant information sheets and consent forms must be clear about how the research team will make data available."
+      },
+      "severity": "major",
+      "recommendation": "Revise the participant information sheet and consent form to cover controlled-access deposit (EGA), sharing with named overseas collaborators, future research use of genomic data and iPSC lines, and commercial or other secondary use as applicable. Have these approved by the REC.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-18",
+      "dmp_section": "3.5",
+      "title": "No justified feedback policy for health-related genetic findings, including for relatives",
+      "issue": "A blanket statement that participants 'will not be informed of any findings' is not a justified feedback policy. WGS of C9orf72 carriers and controls may reveal clinically actionable variants, or a C9orf72 expansion in a 'healthy' control. These findings have implications for blood relatives (C9orf72 is dominantly inherited; professional knowledge). The plan does not say what participants are told at consent.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/09-feedback-of-health-related-findings.md",
+        "location": "2. A feedback policy is required",
+        "quote": "Researchers are required to have a policy on whether health-related findings will be fed back to individual participants."
+      },
+      "severity": "major",
+      "recommendation": "Write and justify a feedback policy covering pathogenic findings, unexpected C9orf72 status in controls and relevance to relatives. Set out a resourced pathway (clinical genetics referral and confirmation in an accredited lab) if findings are to be returned, and explain the policy in the consent materials.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-19",
+      "dmp_section": "3.4 / 3.6",
+      "title": "No provision for participants with ALS who lose capacity",
+      "issue": "ALS participants, especially C9orf72 carriers with frontotemporal involvement, may lose capacity during the 36-month study. Clinical data such as survival status continue to be extracted. The plan neither seeks section 30 MCA approval with consultee arrangements nor states that such participants will be withdrawn and their data handled accordingly.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/10-mental-capacity-act-research.md",
+        "location": "5. Loss of capacity during a study",
+        "quote": "Consent given while a participant had capacity is generally not valid, under common law, once they lose capacity."
+      },
+      "severity": "major",
+      "recommendation": "Either seek NHS REC approval under MCA sections 30-33 with personal or nominated consultee arrangements, or state a withdrawal procedure. Explain the chosen approach in the participant information.",
+      "confidence": "medium"
+    },
+    {
+      "id": "GEN-20",
+      "dmp_section": "1.2 / 7.1",
+      "title": "Recruitment by treating clinicians not safeguarded against undue influence; controls' recruitment unspecified",
+      "issue": "Patients are recruited from the MND clinic by the clinical team that treats them. The plan gives no safeguards such as an independent person taking consent, cooling-off time, or an assurance that care is unaffected by refusal. How healthy volunteers are found and approached is not described.",
+      "basis": "reasoning",
+      "evidence": {
+        "working": "DMP 1.2: patients recruited 'from the Northbridge MND clinic'. DMP 7.1: 'The clinical team at the NHS site will manage recruitment, consent'. No recruitment route for the six healthy volunteers is given. Professional ethics knowledge, not from the pack: a treating-clinician relationship creates potential for undue influence, particularly in a terminal disease."
+      },
+      "severity": "minor",
+      "recommendation": "Describe the recruitment routes for both groups. Have consent taken by a research nurse or someone not directly responsible for care, allow adequate time to decide, and state that declining does not affect care. Describe any payments or expenses.",
+      "confidence": "medium"
+    },
+    {
+      "id": "GEN-21",
+      "dmp_section": "4.2 / 4.4",
+      "title": "Working copies of variant calls and clinical data held outside the NSRE",
+      "issue": "Variant calls and clinical data linked to pseudonymised participants are Highly Confidential and may be held only in the NSRE. The plan keeps working copies on the group shared drive and workstation, which is backed up weekly, so further uncontrolled copies are created.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/11-northbridge-information-classification-policy.md",
+        "location": "7. Exceptions",
+        "quote": "Exceptions are not granted for holding Highly Confidential data outside approved environments for convenience, including for interactive analysis."
+      },
+      "severity": "major",
+      "recommendation": "Remove 4.2 and keep all participant-level data, including working copies, inside the NSRE, using its virtual desktop for interactive analysis. Count tables may leave only after airlock output checking.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-22",
+      "dmp_section": "4.3",
+      "title": "Pipelines rely on internet downloads inside an offline TRE",
+      "issue": "The NSRE has no internet access, so pipelines cannot fetch references and containers at run time. The workflow as described will fail, and the import process has not been planned for.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/12-nsre-user-guide.md",
+        "location": "5. No internet access: importing software and reference data",
+        "quote": "The NSRE has no internet access. Software, containers, reference genomes and annotation files cannot be downloaded from inside the environment."
+      },
+      "severity": "major",
+      "recommendation": "Use the pre-approved nf-core pipelines and containers, or submit import requests for pinned containers and GRCh38/GENCODE files, allowing five working days. Configure the pipelines to run offline.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-23",
+      "dmp_section": "4.3 / 6.3",
+      "title": "Results and record-level variant calls leave the NSRE without output checking or the release process",
+      "issue": "4.3 copies 'results files' out to the workstation and collaborators, apparently by researchers and without airlock checking. 6.3 sends VCFs and clinical data to the US. Variant calls and clinical records can never pass through the airlock, and researchers cannot transfer them out themselves.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/12-nsre-user-guide.md",
+        "location": "6. Getting results out: output checking",
+        "quote": "Record-level data, including sequence reads, alignments, variant calls, individual genotypes and clinical records, are never released through the airlock."
+      },
+      "severity": "major",
+      "recommendation": "Route all outputs through the airlock for checking, releasing only summary results. Give Calder collaborators NSRE accounts under a collaborator agreement, or use the formal data release process with an IGO-approved data sharing agreement and transfer mechanism.",
+      "confidence": "high"
+    },
+    {
+      "id": "GEN-24",
+      "dmp_section": "3.3 / 4.1",
+      "title": "Data classification not recorded in the plan",
+      "issue": "The plan does not record the classification of its data as institutional policy requires. It never states that WGS, RNA-seq reads, variant calls and linked clinical data are Highly Confidential. This omission underlies the handling errors in 4.2, 4.3 and 6.3.",
+      "basis": "pack",
+      "evidence": {
+        "document": "reading-pack/11-northbridge-information-classification-policy.md",
+        "location": "3. Classifying research data",
+        "quote": "Research teams must record the classification of their data in the project's data management plan."
+      },
+      "severity": "minor",
+      "recommendation": "Add a classification table by data type: raw reads, BAMs, VCFs, clinical data and keys as Highly Confidential; output-checked gene count tables as Confidential. Apply the corresponding handling rules.",
+      "confidence": "high"
+    }
+  ]
+}

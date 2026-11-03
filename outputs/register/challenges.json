@@ -1,0 +1,9 @@
+{
+  "role": "applicant",
+  "challenges": [
+    {
+      "finding_id": "BIO-9",
+      "challenge": "This finding is about scientific design, not data management. Whether a modifier analysis is adequately powered is a question for the MRC scientific peer reviewers, not for a DMP panel. Section 6.3 states what data are shared, with whom and for what purpose, and that is what a DMP has to cover. The finding also misreads the plan. Section 6.3 says 'joint analysis', which by definition pools our carriers with our collaborators' data. Nowhere does the plan claim that six carriers are powered on their own. On reproducibility, our side is already specified: section 1.5 names nf-core/sarek at a pinned release on GRCh38 with GENCODE, recorded in the repository. The details of the joint calling belong in the collaboration protocol, not the DMP."
+    }
+  ]
+}

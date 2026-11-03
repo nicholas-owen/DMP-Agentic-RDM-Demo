@@ -1,0 +1,30 @@
+Findings in register: 42 live, 0 withdrawn
+Live findings cited in report: 42 of 42
+
+invented: 0
+
+cites_withdrawn: 0
+
+dropped: 0
+
+withdrawn_unlisted: 0
+
+uncited_lines: 16
+  [major issues] - the NHS Trust, which extracts clinical records and holds the pseudonymisation key;
+  [major issues] - the University, which receives and analyses the data;
+  [major issues] - Calder University, which receives VCFs and clinical data for "joint analysis", suggesting joint or separate controllership.
+  [major issues] - MNT-010's second read file belongs to MNT-009;
+  [major issues] - MNT-012 has no second read file;
+  [major issues] - MNT-008 is labelled 'Ctrl' where the other controls are 'control';
+  [major issues] - MNT-005 has the strandedness value 'stranded', which the pipeline does not accept.
+  [major issues] - sharing VCFs and clinical data with Calder University (USA) for a separate modifier-variant analysis;
+  [major issues] - deposit of count tables and sample information in ArrayExpress;
+  [major issues] - use of WGS to "support future analyses".
+  [major issues] - international sharing with named collaborators and its purpose, including access through NSRE collaborator accounts if that route is adopted;
+  [major issues] - repository deposit and access level;
+  [major issues] - broad consent for future research on samples and data, with optional tiered consent items where appropriate.
+  [major issues] - an IGO-approved data sharing agreement;
+  [major issues] - IGO approval of the transfer mechanism;
+  [major issues] - a transfer carried out by the NSRE team.
+
+RESULT: PROBLEMS FOUND
